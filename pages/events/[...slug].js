@@ -1,30 +1,54 @@
-import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import useSWR from "swr";
 import { Fragment } from "react";
 import EventList from "../../components/events/event-list";
 import ResultsTitle from "../../components/events/results-title";
 import Button from "../../components/ui/button";
 import ErrorAlert from "../../components/ui/error-alert";
-import { getFilteredEvents } from "../../dummy-data";
 
-const FilteredEventsPage = () => {
-  const { query } = useRouter();
+const FilteredEventsPage = (props) => {
+  const { year, month } = props.date;
 
-  const filterData = query.slug;
+  const [filteredEvents, setFilteredEvents] = useState([]);
+  const [isLoading, setisLoading] = useState(true);
 
-  if (!filterData) {
-    return <p className="center">Loading...</p>;
-  }
+  const { data, error } = useSWR(
+    "https://nextjs-course-84422-default-rtdb.firebaseio.com/events.json",
+    (url) => fetch(url).then((res) => res.json())
+  );
 
-  const filteredYear = +filterData[0];
-  const filteredMonth = +filterData[1];
+  useEffect(() => {
+    if (data) {
+      const transformedEvents = [];
+
+      for (const key in data) {
+        const eventDate = new Date(data[key].date);
+
+        if (
+          eventDate.getFullYear() === year &&
+          eventDate.getMonth() === month - 1
+        ) {
+          transformedEvents.push({
+            id: key,
+            date: data[key].date,
+            title: data[key].title,
+            image: data[key].image,
+            location: data[key].location,
+          });
+        }
+      }
+      setFilteredEvents(transformedEvents);
+      setisLoading(false);
+    }
+  }, [data]);
 
   if (
-    isNaN(filteredYear) ||
-    isNaN(filteredMonth) ||
-    filteredYear > 2030 ||
-    filteredYear < 2021 ||
-    filteredMonth < 1 ||
-    filteredMonth > 12
+    isNaN(year) ||
+    isNaN(month) ||
+    year > 2030 ||
+    year < 2021 ||
+    month < 1 ||
+    month > 12
   ) {
     return (
       <Fragment>
@@ -38,10 +62,13 @@ const FilteredEventsPage = () => {
     );
   }
 
-  const filteredEvents = getFilteredEvents({
-    year: filteredYear,
-    month: filteredMonth,
-  });
+  if (isLoading) {
+    return (
+      <ErrorAlert>
+        <p>Loading...</p>
+      </ErrorAlert>
+    );
+  }
 
   if (!filteredEvents || filteredEvents.length === 0) {
     return (
@@ -56,7 +83,7 @@ const FilteredEventsPage = () => {
     );
   }
 
-  const date = new Date(filteredYear, filteredMonth - 1);
+  const date = new Date(year, month - 1);
 
   return (
     <Fragment>
@@ -65,5 +92,20 @@ const FilteredEventsPage = () => {
     </Fragment>
   );
 };
+
+export async function getServerSideProps(context) {
+  const { params } = context;
+
+  const eventDate = params.slug;
+
+  return {
+    props: {
+      date: {
+        year: +eventDate[0],
+        month: +eventDate[1],
+      },
+    },
+  };
+}
 
 export default FilteredEventsPage;
