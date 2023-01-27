@@ -1,4 +1,5 @@
 import { Fragment } from "react";
+import Head from "next/head";
 
 import EventSummary from "../../components/event-detail/event-summary";
 import EventLogistics from "../../components/event-detail/event-logistics";
@@ -21,6 +22,10 @@ const EventDetailPage = ({ selectedEvent }) => {
 
   return (
     <Fragment>
+      <Head>
+        <title>{title} | NextJS Events</title>
+        <meta name="description" content={description.slice(0, 160)} />
+      </Head>
       <EventSummary title={title} />
       <EventLogistics
         date={date}

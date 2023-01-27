@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 import Button from "../ui/button";
 import AddressIcon from "../icons/address-icon";
 import DateIcon from "../icons/date-icon";
@@ -21,7 +23,7 @@ const EventItem = ({ event }) => {
 
   return (
     <div className={eventCard}>
-      <img src={`/${image}`} alt={title} />
+      <Image src={`/${image}`} alt={title} width={360} height={320} />
       <div className={eventContent}>
         <div>
           <h2>{title}</h2>
