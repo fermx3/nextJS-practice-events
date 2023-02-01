@@ -8,6 +8,7 @@ import EventContent from "../../components/event-detail/event-content";
 import { getEventById, getFeaturedEvents } from "../../helpers/api-utils";
 
 import ErrorAlert from "../../components/ui/error-alert";
+import Comments from "../../components/input/comments";
 
 const EventDetailPage = ({ selectedEvent }) => {
   if (!selectedEvent) {
@@ -18,7 +19,7 @@ const EventDetailPage = ({ selectedEvent }) => {
     );
   }
 
-  const { title, description, date, location, image } = selectedEvent;
+  const { id, title, description, date, location, image } = selectedEvent;
 
   return (
     <Fragment>
@@ -36,6 +37,7 @@ const EventDetailPage = ({ selectedEvent }) => {
       <EventContent>
         <p>{description}</p>
       </EventContent>
+      <Comments eventId={id} />
     </Fragment>
   );
 };
