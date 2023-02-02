@@ -1,11 +1,16 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
+import ErrorAlert from "../ui/error-alert";
 
 import classes from "./newsletter-registration.module.css";
 
 function NewsletterRegistration() {
   const emailInputRef = useRef();
+  const [isLoading, setisLoading] = useState(false);
+  const [responseMessage, setResponseMessage] = useState();
 
   function registrationHandler(event) {
+    setResponseMessage(undefined);
+    setisLoading(true);
     event.preventDefault();
 
     // fetch user input (state or refs)
@@ -23,7 +28,11 @@ function NewsletterRegistration() {
       },
     })
       .then((response) => response.json())
-      .then((data) => console.log(data));
+      .then((data) => {
+        setisLoading(false);
+        setResponseMessage(data.message);
+        emailInputRef.current.value = "";
+      });
     // send valid data to API
   }
 
@@ -39,8 +48,18 @@ function NewsletterRegistration() {
             aria-label="Your email"
             ref={emailInputRef}
           />
-          <button>Register</button>
+          <button
+            disabled={isLoading}
+            className={isLoading ? classes.disabledButton : undefined}
+          >
+            {isLoading ? "Please wait" : "Register"}
+          </button>
         </div>
+        {responseMessage && (
+          <ErrorAlert>
+            <p className={classes.responseMessage}>{responseMessage}</p>
+          </ErrorAlert>
+        )}
       </form>
     </section>
   );

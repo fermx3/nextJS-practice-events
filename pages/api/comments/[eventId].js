@@ -1,44 +1,38 @@
-const dummy_data = [
-  {
-    id: "e1",
-    comments: [
-      {
-        id: "comment01",
-        comment: "This post 1 is amazing!",
-        name: "Commenter 1",
-      },
-      { id: "comment02", comment: "Sure it is!", name: "Commenter 1" },
-    ],
-  },
-  {
-    id: "e2",
-    comments: [
-      {
-        id: "comment01",
-        comment: "This post 2 is amazing!",
-        name: "Commenter 2",
-      },
-    ],
-  },
-  {
-    id: "e3",
-    comments: [
-      {
-        id: "comment01",
-        comment: "This post 3 is amazing!",
-        name: "Commenter 3",
-      },
-    ],
-  },
-];
+import {
+  connectDatabase,
+  getFilteredComments,
+  insertDocument,
+} from "../../../helpers/db-utils";
 
-const handler = (req, res) => {
-  const commentId = req.query.eventId;
+const handler = async (req, res) => {
+  const eventId = req.query.eventId;
+
+  let client;
+
+  try {
+    client = await connectDatabase();
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Database connection failed! Please try again later." });
+    return;
+  }
 
   if (req.method === "GET") {
-    const selectedComments = dummy_data.find((data) => data.id === commentId);
+    const query = { eventId: eventId };
 
-    res.status(200).json({ comments: selectedComments.comments });
+    let selectedComments;
+
+    try {
+      selectedComments = await getFilteredComments(client, "comments", query, {
+        date: -1,
+      });
+      res.status(200).json({ comments: selectedComments });
+    } catch (error) {
+      res.status(500).json({
+        message: "Comments retrieval failed! Please try again later.",
+      });
+    }
   }
 
   if (req.method === "POST") {
@@ -57,13 +51,23 @@ const handler = (req, res) => {
     }
 
     const newComment = {
-      id: new Date().toISOString(),
+      date: new Date(),
       email,
       name,
       text,
+      eventId,
     };
 
-    res.status(201).json({ message: "Success", newComment });
+    let result;
+
+    try {
+      result = await insertDocument(client, "comments", newComment);
+      res.status(201).json({ message: "Comment send!", newComment, result });
+    } catch (error) {
+      res.status(500).json({
+        message: "Comment insertion failed! Please try again later.",
+      });
+    }
   }
 };
 

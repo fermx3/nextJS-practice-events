@@ -1,34 +1,38 @@
-const handler = (req, res) => {
+import { connectDatabase, insertDocument } from "../../helpers/db-utils";
+
+const handler = async (req, res) => {
   if (req.method === "POST") {
     const enteredEmail = req.body.email;
 
     if (!enteredEmail || !enteredEmail.includes("@")) {
-      res.status(422).json({ message: "Invalid email address." });
+      res
+        .status(422)
+        .json({ message: "Invalid email address. Please try again." });
       return;
     }
 
-    const id =
-      new Date().toISOString() + "_" + Math.round(Math.random() * 1000);
+    let client;
 
-    const newEmail = {
-      id,
-      enteredEmail,
-    };
+    try {
+      client = await connectDatabase();
+    } catch (error) {
+      res.status(500).json({
+        message: "Database connection failed! Please try again later.",
+      });
+      return;
+    }
 
-    // fetch(
-    //   `https://nextjs-course-84422-default-rtdb.firebaseio.com/newsletter/${id}`,
-    //   {
-    //     method: "POST",
-    //     body: JSON.stringify(newEmail),
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //     },
-    //   }
-    // )
-    //   .then((response) => response.json())
-    //   .then((data) => console.log(data));
+    try {
+      await insertDocument(client, "newsletterEmails", { email: enteredEmail });
+      client.close();
+    } catch (error) {
+      res
+        .status(500)
+        .json({ message: "Inserting data failed! Please try again later." });
+      return;
+    }
 
-    res.status(201).json({ message: "Signed up!", newEmail });
+    res.status(201).json({ message: "Signed up!", email: enteredEmail });
   }
 };
 

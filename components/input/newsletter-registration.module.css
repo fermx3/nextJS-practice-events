@@ -41,3 +41,21 @@
 .control input {
   flex: 1;
 }
+
+.newsletter .disabledButton {
+  background-color: lightblue;
+  color: gray;
+  border-color: lightblue;
+}
+
+.newsletter .disabledButton:hover,
+.newsletter .disabledButton:active {
+  background-color: lightblue;
+  border-color: lightblue;
+  cursor: wait;
+}
+
+.responseMessage {
+  font-size: 1rem;
+  margin: 0;
+}
