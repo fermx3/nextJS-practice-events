@@ -7,8 +7,9 @@ import EventList from "../../components/events/event-list";
 import ResultsTitle from "../../components/events/results-title";
 import Button from "../../components/ui/button";
 import Alert from "../../components/ui/alert";
+import LoadingSpinner from "../../components/ui/loading-spinner";
 
-const FilteredEventsPage = (props) => {
+const FilteredEventsPage = () => {
   const [loadedEvents, setLoadedEvents] = useState();
   const router = useRouter();
 
@@ -38,10 +39,11 @@ const FilteredEventsPage = (props) => {
 
   if (!loadedEvents) {
     return (
-      <Fragment>
+      <div style={{ marginTop: "2rem" }}>
         {pageHeadData}
+        <LoadingSpinner />
         <p className="center">Loading...</p>
-      </Fragment>
+      </div>
     );
   }
 
