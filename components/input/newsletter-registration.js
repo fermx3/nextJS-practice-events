@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
-import ErrorAlert from "../ui/error-alert";
+import Alert from "../ui/alert";
+import Button from "../ui/button";
 
 import classes from "./newsletter-registration.module.css";
 
@@ -48,17 +49,17 @@ function NewsletterRegistration() {
             aria-label="Your email"
             ref={emailInputRef}
           />
-          <button
-            disabled={isLoading}
-            className={isLoading ? classes.disabledButton : undefined}
+          <Button
+            type="newsletter"
+            disabledButton={isLoading && "disabledButton"}
           >
             {isLoading ? "Please wait" : "Register"}
-          </button>
+          </Button>
         </div>
         {responseMessage && (
-          <ErrorAlert>
+          <Alert smallAlert="true">
             <p className={classes.responseMessage}>{responseMessage}</p>
-          </ErrorAlert>
+          </Alert>
         )}
       </form>
     </section>

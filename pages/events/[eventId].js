@@ -7,15 +7,15 @@ import EventContent from "../../components/event-detail/event-content";
 
 import { getEventById, getFeaturedEvents } from "../../helpers/api-utils";
 
-import ErrorAlert from "../../components/ui/error-alert";
+import Alert from "../../components/ui/alert";
 import Comments from "../../components/input/comments";
 
 const EventDetailPage = ({ selectedEvent }) => {
   if (!selectedEvent) {
     return (
-      <ErrorAlert>
+      <Alert>
         <p>No event found!</p>
-      </ErrorAlert>
+      </Alert>
     );
   }
 

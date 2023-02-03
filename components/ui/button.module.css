@@ -16,3 +16,45 @@
   background-color: #02afa1;
   border-color: #02afa1;
 }
+
+.newsletter {
+  background-color: #03be9f;
+  border: 1px solid #03be9f;
+  border-radius: 6px;
+  color: #dafff7;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  font: inherit;
+  cursor: pointer;
+}
+
+.newsletter :hover,
+.newsletter :active {
+  background-color: #02afa1;
+  border-color: #02afa1;
+}
+
+.invertedButton {
+  font: inherit;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  color: #414141;
+  border: 1px solid #414141;
+  cursor: pointer;
+
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.2);
+}
+
+.invertedButton:hover,
+.inverdedButton:active {
+  background-color: #dcfff9;
+}
+
+.disabledButton,
+.disabledButton:hover,
+.disabledButton:active {
+  background-color: lightblue;
+  color: rgb(123, 123, 123);
+  border-color: 1px solid #ccc;
+  cursor: wait;
+}

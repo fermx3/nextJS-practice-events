@@ -4,6 +4,7 @@ import CommentList from "./comment-list";
 import NewComment from "./new-comment";
 import classes from "./comments.module.css";
 import LoadingSpinner from "../ui/loading-spinner";
+import Button from "../ui/button";
 
 function Comments(props) {
   const { eventId } = props;
@@ -11,6 +12,8 @@ function Comments(props) {
   const [showComments, setShowComments] = useState(false);
   const [comments, setComments] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isSending, setIsSending] = useState(false);
+  const [resMessage, setResMessage] = useState();
 
   useEffect(() => {
     setIsLoading(true);
@@ -19,15 +22,19 @@ function Comments(props) {
       .then((data) => {
         setComments(data.comments);
         setIsLoading(false);
+        return () => ac.abort(); // Abort both fetches on unmount
       });
   }, [showComments]);
 
   function toggleCommentsHandler() {
+    setResMessage();
     setShowComments((prevStatus) => !prevStatus);
   }
 
-  function addCommentHandler(commentData) {
+  function addCommentHandler(commentData, clearFields) {
     // send data to API
+    setIsSending(true);
+    setResMessage();
     fetch(`/api/comments/${eventId}`, {
       method: "POST",
       body: JSON.stringify(commentData),
@@ -36,15 +43,25 @@ function Comments(props) {
       },
     })
       .then((response) => response.json())
-      .then((data) => console.log(data));
+      .then((data) => {
+        setResMessage(data.message);
+        clearFields();
+        setIsSending(false);
+      });
   }
 
   return (
     <section className={classes.comments}>
-      <button onClick={toggleCommentsHandler}>
+      <Button onClick={toggleCommentsHandler} type="invertedButton">
         {showComments ? "Hide" : "Show"} Comments
-      </button>
-      {showComments && <NewComment onAddComment={addCommentHandler} />}
+      </Button>
+      {showComments && (
+        <NewComment
+          onAddComment={addCommentHandler}
+          isSending={isSending}
+          resMessage={resMessage}
+        />
+      )}
       {showComments && isLoading ? (
         <LoadingSpinner />
       ) : (

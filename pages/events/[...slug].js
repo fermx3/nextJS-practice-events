@@ -6,7 +6,7 @@ import useSWR from "swr";
 import EventList from "../../components/events/event-list";
 import ResultsTitle from "../../components/events/results-title";
 import Button from "../../components/ui/button";
-import ErrorAlert from "../../components/ui/error-alert";
+import Alert from "../../components/ui/alert";
 
 const FilteredEventsPage = (props) => {
   const [loadedEvents, setLoadedEvents] = useState();
@@ -70,9 +70,9 @@ const FilteredEventsPage = (props) => {
     return (
       <Fragment>
         {pageHeadData}
-        <ErrorAlert>
+        <Alert>
           <p>Invalid filter. Please adjust your values!</p>
-        </ErrorAlert>
+        </Alert>
         <div className="center">
           <Button url="/events">Show All Events</Button>
         </div>
@@ -92,9 +92,9 @@ const FilteredEventsPage = (props) => {
     return (
       <Fragment>
         {pageHeadData}
-        <ErrorAlert>
+        <Alert>
           <p>Sorry. No events found for the chosen dates.</p>
-        </ErrorAlert>
+        </Alert>
         <div className="center">
           <Button url="/events">Show All Events</Button>
         </div>

@@ -1,7 +1,10 @@
 import { useRef, useState } from "react";
 import classes from "./new-comment.module.css";
 
-function NewComment(props) {
+import Button from "../ui/button";
+import Alert from "../ui/alert";
+
+function NewComment({ onAddComment, isSending, resMessage }) {
   const [isInvalid, setIsInvalid] = useState(false);
 
   const emailInputRef = useRef();
@@ -28,11 +31,20 @@ function NewComment(props) {
       return;
     }
 
-    props.onAddComment({
-      email: enteredEmail,
-      name: enteredName,
-      text: enteredComment,
-    });
+    const clearFields = () => {
+      emailInputRef.current.value = "";
+      nameInputRef.current.value = "";
+      commentInputRef.current.value = "";
+    };
+
+    onAddComment(
+      {
+        email: enteredEmail,
+        name: enteredName,
+        text: enteredComment,
+      },
+      clearFields
+    );
   }
 
   return (
@@ -52,7 +64,10 @@ function NewComment(props) {
         <textarea id="comment" rows="5" ref={commentInputRef}></textarea>
       </div>
       {isInvalid && <p>Please enter a valid email address and comment!</p>}
-      <button>Submit</button>
+      <Button type="invertedButton" disabledButton={isSending}>
+        {isSending ? "Sending Comment" : "Submit"}
+      </Button>
+      {resMessage && <Alert smallAlert="true">{resMessage}</Alert>}
     </form>
   );
 }

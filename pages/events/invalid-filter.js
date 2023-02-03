@@ -1,14 +1,14 @@
 import { Fragment } from "react";
 
-import ErrorAlert from "../../components/ui/error-alert";
+import Alert from "../../components/ui/alert";
 import Button from "../../components/ui/button";
 
 const InvalidFilter = () => {
   return (
     <Fragment>
-      <ErrorAlert>
+      <Alert>
         <p>Invalid filter. Please asjust your values!</p>
-      </ErrorAlert>
+      </Alert>
       <div className="center">
         <Button url="/events">Show All Events</Button>
       </div>
