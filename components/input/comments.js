@@ -47,12 +47,18 @@ function Comments(props) {
         setResMessage(data.message);
         clearFields();
         setIsSending(false);
+        setTimeout(() => {
+          setResMessage();
+        }, 3000);
       });
   }
 
   return (
     <section className={classes.comments}>
-      <Button onClick={toggleCommentsHandler} type="invertedButton">
+      <Button
+        onClick={toggleCommentsHandler}
+        url={`/events/${eventId}/#comments`}
+      >
         {showComments ? "Hide" : "Show"} Comments
       </Button>
       {showComments && (

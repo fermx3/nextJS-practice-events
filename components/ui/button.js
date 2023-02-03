@@ -6,7 +6,15 @@ const Button = ({ children, url, onClick, type, disabledButton }) => {
   if (url) {
     return (
       <Link href={url}>
-        <a className={type ? classes[type] : classes.btn}>{children}</a>
+        <a
+          className={`${type ? classes[type] : classes.btn} ${
+            disabledButton && classes.disabledButton
+          }`}
+          onClick={onClick}
+          disabled={disabledButton}
+        >
+          {children}
+        </a>
       </Link>
     );
   }

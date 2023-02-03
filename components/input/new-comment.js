@@ -3,9 +3,11 @@ import classes from "./new-comment.module.css";
 
 import Button from "../ui/button";
 import Alert from "../ui/alert";
+import LoadingRing from "../ui/loading-ring";
 
 function NewComment({ onAddComment, isSending, resMessage }) {
   const [isInvalid, setIsInvalid] = useState(false);
+  const [fadeOut, setFadeOut] = useState(false);
 
   const emailInputRef = useRef();
   const nameInputRef = useRef();
@@ -32,9 +34,13 @@ function NewComment({ onAddComment, isSending, resMessage }) {
     }
 
     const clearFields = () => {
+      setFadeOut(false);
       emailInputRef.current.value = "";
       nameInputRef.current.value = "";
       commentInputRef.current.value = "";
+      setTimeout(() => {
+        setFadeOut(true);
+      }, 2500);
     };
 
     onAddComment(
@@ -48,7 +54,7 @@ function NewComment({ onAddComment, isSending, resMessage }) {
   }
 
   return (
-    <form className={classes.form} onSubmit={sendCommentHandler}>
+    <form className={classes.form} onSubmit={sendCommentHandler} id="comments">
       <div className={classes.row}>
         <div className={classes.control}>
           <label htmlFor="email">Your email</label>
@@ -65,9 +71,14 @@ function NewComment({ onAddComment, isSending, resMessage }) {
       </div>
       {isInvalid && <p>Please enter a valid email address and comment!</p>}
       <Button type="invertedButton" disabledButton={isSending}>
-        {isSending ? "Sending Comment" : "Submit"}
+        {isSending ? "Sending Comment" : "Submit"}{" "}
+        {isSending && <LoadingRing />}
       </Button>
-      {resMessage && <Alert smallAlert="true">{resMessage}</Alert>}
+      {resMessage && (
+        <Alert smallAlert="true" fadeOut={fadeOut}>
+          {resMessage}
+        </Alert>
+      )}
     </form>
   );
 }
