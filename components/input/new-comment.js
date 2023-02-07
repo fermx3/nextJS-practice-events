@@ -2,12 +2,10 @@ import { useRef, useState } from "react";
 import classes from "./new-comment.module.css";
 
 import Button from "../ui/button";
-import Alert from "../ui/alert";
 import LoadingRing from "../ui/loading-ring";
 
-function NewComment({ onAddComment, isSending, resMessage }) {
+function NewComment({ onAddComment, isSending }) {
   const [isInvalid, setIsInvalid] = useState(false);
-  const [fadeOut, setFadeOut] = useState(false);
 
   const emailInputRef = useRef();
   const nameInputRef = useRef();
@@ -34,13 +32,9 @@ function NewComment({ onAddComment, isSending, resMessage }) {
     }
 
     const clearFields = () => {
-      setFadeOut(false);
       emailInputRef.current.value = "";
       nameInputRef.current.value = "";
       commentInputRef.current.value = "";
-      setTimeout(() => {
-        setFadeOut(true);
-      }, 2500);
     };
 
     onAddComment(
@@ -74,11 +68,6 @@ function NewComment({ onAddComment, isSending, resMessage }) {
         {isSending ? "Sending Comment" : "Submit"}{" "}
         {isSending && <LoadingRing />}
       </Button>
-      {resMessage && (
-        <Alert smallAlert="true" fadeOut={fadeOut}>
-          {resMessage}
-        </Alert>
-      )}
     </form>
   );
 }

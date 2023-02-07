@@ -32,7 +32,12 @@ const handler = async (req, res) => {
       return;
     }
 
-    res.status(201).json({ message: "Signed up!", email: enteredEmail });
+    res
+      .status(201)
+      .json({
+        message: "Successfully signed up to the newsletter!",
+        email: enteredEmail,
+      });
   }
 };
 

@@ -62,7 +62,7 @@ const handler = async (req, res) => {
 
     try {
       result = await insertDocument(client, "comments", newComment);
-      res.status(201).json({ message: "Comment send!", newComment, result });
+      res.status(201).json({ message: "Comment sent!", newComment, result });
     } catch (error) {
       res.status(500).json({
         message: "Comment insertion failed! Please try again later.",

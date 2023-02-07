@@ -1,5 +1,6 @@
-import { useRef, useState } from "react";
-import Alert from "../ui/alert";
+import { useRef, useState, useContext } from "react";
+import NotificationContext from "../../store/notification-context";
+
 import Button from "../ui/button";
 import LoadingRing from "../ui/loading-ring";
 
@@ -7,14 +8,14 @@ import classes from "./newsletter-registration.module.css";
 
 function NewsletterRegistration() {
   const emailInputRef = useRef();
+  const notificationCtx = useContext(NotificationContext);
+
   const [isLoading, setisLoading] = useState(false);
   const [responseMessage, setResponseMessage] = useState();
   const [fadeOut, setFadeOut] = useState(false);
 
   function registrationHandler(event) {
-    setResponseMessage(undefined);
     setisLoading(true);
-    setFadeOut(false);
     event.preventDefault();
 
     // fetch user input (state or refs)
@@ -24,6 +25,12 @@ function NewsletterRegistration() {
       email: enteredEmail,
     };
 
+    notificationCtx.showNotification({
+      title: "Signing up...",
+      message: "Registering for newsletter.",
+      status: "pending",
+    });
+
     fetch("/api/newsletter", {
       method: "POST",
       body: JSON.stringify(reqBody),
@@ -31,17 +38,31 @@ function NewsletterRegistration() {
         "Content-Type": "application/json",
       },
     })
-      .then((response) => response.json())
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        }
+
+        return response.json().then((data) => {
+          setisLoading(false);
+          throw new Error(data.message || "Something went wrong!");
+        });
+      })
       .then((data) => {
         setisLoading(false);
-        setResponseMessage(data.message);
         emailInputRef.current.value = "";
-        setTimeout(() => {
-          setFadeOut(true);
-        }, 2000);
-        setTimeout(() => {
-          setResponseMessage();
-        }, 3000);
+        notificationCtx.showNotification({
+          title: "Success!",
+          message: data.message,
+          status: "success",
+        });
+      })
+      .catch((error) => {
+        notificationCtx.showNotification({
+          title: "Error!",
+          message: error.message || "Something went wrong!",
+          status: "error",
+        });
       });
     // send valid data to API
   }
@@ -66,11 +87,6 @@ function NewsletterRegistration() {
             {isLoading && <LoadingRing />}
           </Button>
         </div>
-        {responseMessage && (
-          <Alert smallAlert="true" fadeOut={fadeOut}>
-            <p className={classes.responseMessage}>{responseMessage}</p>
-          </Alert>
-        )}
       </form>
     </section>
   );
